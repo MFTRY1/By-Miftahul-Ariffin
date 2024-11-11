@@ -1,0 +1,64 @@
+// Definisikan pin sensor ultrasonik
+const int trigPin = 25;
+const int echoPin = 26;
+
+// Definisikan pin untuk pintu
+const int pintuPin = 14;
+const int buzzer = 27;
+
+// Definisikan variabel untuk menghitung jarak
+long duration;
+int distance;
+
+
+void setup() {
+  // Inisialisasi pin output dan input
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(pintuPin, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  // Mulai Serial Monitor
+  Serial.begin(115200);
+  digitalWrite(pintuPin, HIGH);
+  digitalWrite(buzzer, HIGH);
+}
+
+void loop() {
+  // Kirimkan sinyal ultrasonik
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Baca waktu perjalanan pulsa ultrasonik
+  duration = pulseIn(echoPin, HIGH);
+
+  // Hitung jarak berdasarkan waktu perjalanan
+  distance = duration * 0.037 / 2; // jika belum presisi ubah pada nilai 0.037
+
+  // Cek apakah ada objek dalam jarak tertentu
+  if (distance < 15) {  // Jarak yang dapat disesuaikan
+    // Buka pintu dengan membuka kunci
+    digitalWrite(buzzer, LOW);
+    delay(100);
+    digitalWrite(buzzer, HIGH);
+    delay(100);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+    digitalWrite(buzzer, HIGH);
+    delay(100);
+    digitalWrite(pintuPin, LOW);
+    delay(3000);  // Tahan pintu terbuka selama 3 detik
+  } else {
+    digitalWrite(pintuPin, HIGH);
+    digitalWrite(buzzer, HIGH);
+    delay(1000);  // Tahan selama 1 detik sebelum membaca sensor lagi
+
+  }
+
+  // Tampilkan jarak di Serial Monitor
+  Serial.print(distance);
+  Serial.println(" cm");
+  delay(500); // Atur interval pembacaan
+}
